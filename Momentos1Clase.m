@@ -1,0 +1,46 @@
+% THIS PROGRAM DETERMINES THE CHARGE DISTRIBUTION
+% ON A CONDUCTING THIN WIRE. OF RADIUS AA AND
+% THE LENGTH L. MAINTAINED AT Vo VOLT
+% THE WIRE IS LOCATED AT 0 < Y < L
+% ALL DIMENSIONS ARE IN S.I. UNITS
+
+% MOMENT METHOD IS USED
+% N IS THE NO. OF SEGMENTS INTO WHICH THE WIRE IS DIVIDED
+% RHO IS THE LINE CHARGE DENSITY. RHO = INV(A)*B
+
+% FIRST, SPECIFY PROBLEM PARAMETERS
+ER = 1.0;
+EO = 8.8541e-12;
+VO = 1.0;
+AA = 0.001;
+L = 1.0;
+N = 20;
+DELTA = L/N;
+
+% SECOND, CALCULATE THE ELEMENTS OF THE COEFFICIENT
+% MATRIX A
+I = 1:N;
+Y = DELTA*(I-0.5);
+for i=1:N
+    for j=1:N
+        if(i~=j)
+            A(i,j) = DELTA/abs(Y(i)-Y(j));
+        else
+            A(i,j) = 2.0*log(DELTA/AA);
+        end
+    end
+end
+
+% NOW DETERMINE THE MATRIX OF CONSTANT VECTOR B
+% AND FIND Q
+B = 4.0*pi*EO*ER*VO*ones(N,1);
+C = inv(A);
+RHO = C*B;
+SUM = 0.0;
+for I=1:N
+   SUM = SUM + RHO(I); 
+end
+Q = SUM*DELTA;
+
+plot(Y, RHO)
+xlabel('y (cm)'), ylabel('rho_L (pC/m)')
